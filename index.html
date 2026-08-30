@@ -1,29 +1,18 @@
-<!DOCTYPE html>
-<html lang="ja">
+from pathlib import Path
 
+html = r'''<!DOCTYPE html>
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>サロン開業ロードマップ診断</title>
 
   <!-- LIFF SDK -->
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
   <style>
-
     body {
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Helvetica Neue",
-        "Noto Sans JP",
-        sans-serif;
-
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Noto Sans JP", sans-serif;
       background: #f8f5ef;
       margin: 0;
       color: #4b443d;
@@ -160,715 +149,316 @@
       color: #777;
       margin-top: 15px;
     }
-
-    .loading {
-      text-align: center;
-      padding: 40px 10px;
-    }
-
   </style>
-
 </head>
 
-
 <body>
+  <div class="container">
+    <div class="card">
 
+      <!-- START -->
+      <div id="start">
+        <h1>サロン開業<br>ロードマップ診断</h1>
 
-<div class="container">
-
-  <div class="card">
-
-
-    <!-- START -->
-
-    <div id="start">
-
-      <h1>
-        サロン開業<br>
-        ロードマップ診断
-      </h1>
-
-      <p class="lead">
-        3つの質問に答えるだけで、<br>
-        あなたが今どこから始めればいいのかを<br>
-        一緒に整理します。
-      </p>
-
-      <button
-        id="startButton"
-        onclick="startDiagnosis()"
-      >
-        診断をはじめる
-      </button>
-
-    </div>
-
-
-
-    <!-- QUESTION 1 -->
-
-    <div
-      class="step"
-      id="step1"
-    >
-
-      <div class="progress">
-        QUESTION 1 / 3
-      </div>
-
-      <div class="question">
-        どうしてサロンを始めたいと思いましたか？
-      </div>
-
-      <div class="description">
-        「なぜサロンを始めたいと思ったのか」
-        「サロンを通して何を実現したいのか」など、
-        きっかけや今の気持ちを自由に教えてください。
-      </div>
-
-      <textarea
-        id="q1"
-        placeholder="例：子育てが一段落して、これからは自分の好きなことを仕事にしたいと思った。"
-      ></textarea>
-
-      <button onclick="nextQuestion(1)">
-        次へ
-      </button>
-
-    </div>
-
-
-
-    <!-- QUESTION 2 -->
-
-    <div
-      class="step"
-      id="step2"
-    >
-
-      <div class="progress">
-        QUESTION 2 / 3
-      </div>
-
-      <div class="question">
-        どんなお客様の、どんな悩みを解決したいですか？
-      </div>
-
-      <div class="description">
-        まだ具体的に決まっていなくても大丈夫です。
-        「こんな人に来てほしい」
-        「こんなことで悩んでいる人を助けたい」
-        というイメージでもOKです。
-      </div>
-
-      <textarea
-        id="q2"
-        placeholder="例：自分のことを後回しにしてきた女性に、自分を大切にする時間を提供したい。"
-      ></textarea>
-
-      <button onclick="nextQuestion(2)">
-        次へ
-      </button>
-
-    </div>
-
-
-
-    <!-- QUESTION 3 -->
-
-    <div
-      class="step"
-      id="step3"
-    >
-
-      <div class="progress">
-        QUESTION 3 / 3
-      </div>
-
-      <div class="question">
-        今、サロン開業について<br>
-        一番わからない・不安なことは何ですか？
-      </div>
-
-      <div class="description">
-        「何から手をつければいいかわからない」でも大丈夫です。
-        今、一番気になっていることを教えてください。
-      </div>
-
-      <textarea
-        id="q3"
-        placeholder="例：やりたい気持ちはあるけれど、何から決めればいいのかわからない。"
-      ></textarea>
-
-      <button onclick="submitDiagnosis()">
-        診断結果を見る
-      </button>
-
-    </div>
-
-
-
-    <!-- LOADING -->
-
-    <div
-      id="loading"
-      class="loading"
-      style="display:none;"
-    >
-
-      <p>
-        回答を整理しています…
-      </p>
-
-    </div>
-
-
-
-    <!-- RESULT -->
-
-    <div id="result">
-
-      <h1>
-        あなたの現在地
-      </h1>
-
-      <div class="result-label">
-        サロン開業ロードマップ
-      </div>
-
-      <div
-        class="result-step"
-        id="resultStep"
-      ></div>
-
-      <div
-        class="result-message"
-        id="resultMessage"
-      ></div>
-
-
-      <div class="roadmap-box">
-
-        <strong>
-          🌿 あなただけのロードマップを作成します
-        </strong>
-
-        <p class="small">
-          いただいた3つの回答をもとに、
-          「今やること → 次にやること → 開業まで」を
-          あなたの状況に合わせて整理します。
+        <p class="lead">
+          3つの質問に答えるだけで、<br>
+          あなたが今どこから始めればいいのかを<br>
+          一緒に整理します。
         </p>
 
-        <p class="small">
-          <strong>
-            3日前後を目安に、LINEでお送りします。
-          </strong>
-        </p>
+        <!-- LINE情報の取得が終わっていなくても必ず押せる -->
+        <button id="startButton" type="button">
+          診断をはじめる
+        </button>
+      </div>
 
+      <!-- QUESTION 1 -->
+      <div class="step" id="step1">
+        <div class="progress">QUESTION 1 / 3</div>
+
+        <div class="question">
+          どうしてサロンを始めたいと思いましたか？
+        </div>
+
+        <div class="description">
+          「なぜサロンを始めたいと思ったのか」「サロンを通して何を実現したいのか」など、
+          きっかけや今の気持ちを自由に教えてください。
+        </div>
+
+        <textarea id="q1" placeholder="例：子育てが一段落して、これからは自分の好きなことを仕事にしたいと思った。"></textarea>
+
+        <button type="button" id="next1">次へ</button>
+      </div>
+
+      <!-- QUESTION 2 -->
+      <div class="step" id="step2">
+        <div class="progress">QUESTION 2 / 3</div>
+
+        <div class="question">
+          どんなお客様の、どんな悩みを解決したいですか？
+        </div>
+
+        <div class="description">
+          まだ具体的に決まっていなくても大丈夫です。
+          「こんな人に来てほしい」「こんなことで悩んでいる人を助けたい」
+          というイメージでもOKです。
+        </div>
+
+        <textarea id="q2" placeholder="例：自分のことを後回しにしてきた女性に、自分を大切にする時間を提供したい。"></textarea>
+
+        <button type="button" id="next2">次へ</button>
+      </div>
+
+      <!-- QUESTION 3 -->
+      <div class="step" id="step3">
+        <div class="progress">QUESTION 3 / 3</div>
+
+        <div class="question">
+          今、サロン開業について<br>
+          一番わからない・不安なことは何ですか？
+        </div>
+
+        <div class="description">
+          「何から手をつければいいかわからない」でも大丈夫です。
+          今、一番気になっていることを教えてください。
+        </div>
+
+        <textarea id="q3" placeholder="例：やりたい気持ちはあるけれど、何から決めればいいのかわからない。"></textarea>
+
+        <button type="button" id="submitButton">診断結果を見る</button>
+      </div>
+
+      <!-- RESULT -->
+      <div id="result">
+        <h1>あなたの現在地</h1>
+
+        <div class="result-label">サロン開業ロードマップ</div>
+
+        <div class="result-step" id="resultStep"></div>
+
+        <div class="result-message" id="resultMessage"></div>
+
+        <div class="roadmap-box">
+          <strong>🌿 あなただけのロードマップを作成します</strong>
+
+          <p class="small">
+            いただいた3つの回答をもとに、
+            「今やること → 次にやること → 開業まで」を
+            あなたの状況に合わせて整理します。
+          </p>
+
+          <p class="small">
+            <strong>3日前後を目安に、LINEでお送りします。</strong>
+          </p>
+        </div>
       </div>
 
     </div>
-
-
   </div>
 
-</div>
+  <!-- GAS送信用 -->
+  <iframe name="gasFrame" style="display:none;"></iframe>
 
+  <form id="gasForm" method="POST" target="gasFrame" style="display:none;">
+    <input type="hidden" name="lineUserId" id="formLineUserId">
+    <input type="hidden" name="displayName" id="formDisplayName">
+    <input type="hidden" name="pictureUrl" id="formPictureUrl">
+    <input type="hidden" name="q1" id="formQ1">
+    <input type="hidden" name="q2" id="formQ2">
+    <input type="hidden" name="q3" id="formQ3">
+    <input type="hidden" name="currentStep" id="formCurrentStep">
+  </form>
 
+  <script>
+    /* =========================
+       LIFF設定
+    ========================= */
+    const LIFF_ID = "2011308854-yB1AByVO";
 
-<!-- GAS送信用の非表示iframe -->
+    /* =========================
+       GAS設定
+    ========================= */
+    const GAS_URL =
+      "https://script.google.com/macros/s/AKfycbxynAozFlPf0SB9xkzLcRPLoQEBlBnkSo5gjGxAWjSOhEjqBHJtUaKYFaDVQUFlobnz/exec";
 
-<iframe
-  name="gasFrame"
-  style="display:none;"
-></iframe>
+    /* =========================
+       LINEプロフィール情報
+    ========================= */
+    let lineProfile = {
+      userId: "",
+      displayName: "",
+      pictureUrl: ""
+    };
 
+    /* =========================
+       LIFF初期化
+       ※診断開始ボタンとは完全に独立
+    ========================= */
+    async function initializeLiff() {
+      try {
+        if (typeof liff === "undefined") {
+          throw new Error("LIFF SDKが読み込まれていません");
+        }
 
+        await liff.init({ liffId: LIFF_ID });
 
-<form
-  id="gasForm"
-  method="POST"
-  target="gasFrame"
-  style="display:none;"
->
+        if (!liff.isLoggedIn()) {
+          // 外部ブラウザから開いた場合だけLINEログインへ
+          liff.login({ redirectUri: window.location.href });
+          return;
+        }
 
-  <input type="hidden" name="lineUserId" id="formLineUserId">
-  <input type="hidden" name="displayName" id="formDisplayName">
-  <input type="hidden" name="pictureUrl" id="formPictureUrl">
+        const profile = await liff.getProfile();
 
-  <input type="hidden" name="q1" id="formQ1">
-  <input type="hidden" name="q2" id="formQ2">
-  <input type="hidden" name="q3" id="formQ3">
+        lineProfile = {
+          userId: profile.userId || "",
+          displayName: profile.displayName || "",
+          pictureUrl: profile.pictureUrl || ""
+        };
 
-  <input type="hidden" name="currentStep" id="formCurrentStep">
+        console.log("LINEプロフィール取得成功", lineProfile);
 
-</form>
-
-
-
-<script>
-
-
-/* ========================================
-   LIFF設定
-======================================== */
-
-const LIFF_ID =
-  "2011308854-yB1AByVO";
-
-
-/* ========================================
-   GAS設定
-
-   ※現在使用しているWebアプリURL
-======================================== */
-
-const GAS_URL =
-  "https://script.google.com/macros/s/AKfycbxynAozFlPf0SB9xkzLcRPLoQEBlBnkSo5gjGxAWjSOhEjqBHJtUaKYFaDVQUFlobnz/exec";
-
-
-
-/* ========================================
-   LINEプロフィール情報
-======================================== */
-
-let lineProfile = {
-
-  userId: "",
-  displayName: "",
-  pictureUrl: ""
-
-};
-
-
-
-/* ========================================
-   LIFF初期化
-======================================== */
-
-async function initializeLiff() {
-
-  try {
-
-    await liff.init({
-      liffId: LIFF_ID
-    });
-
-
-    /*
-     * LINEアプリ外から開かれた場合
-     */
-
-    if (!liff.isLoggedIn()) {
-
-      liff.login();
-
-      return;
-
+      } catch (error) {
+        // LIFF取得に失敗しても診断機能は止めない
+        console.error("LIFF初期化エラー", error);
+      }
     }
 
-
-    /*
-     * プロフィール取得
-     */
-
-    const profile =
-      await liff.getProfile();
-
-
-    lineProfile = {
-
-      userId:
-        profile.userId || "",
-
-      displayName:
-        profile.displayName || "",
-
-      pictureUrl:
-        profile.pictureUrl || ""
-
-    };
-
-
-    console.log(
-      "LINEプロフィール取得成功",
-      lineProfile
-    );
-
-
-  } catch (error) {
-
-    console.error(
-      "LIFF初期化エラー",
-      error
-    );
-
-    /*
-     * 診断画面自体は利用できるようにする
-     */
-
-  }
-
-}
-
-
-
-/* ========================================
-   ページ読み込み時
-======================================== */
-
-window.addEventListener(
-  "load",
-  initializeLiff
-);
-
-
-
-/* ========================================
-   診断開始
-======================================== */
-
-function startDiagnosis() {
-
-  document
-    .getElementById("start")
-    .style.display = "none";
-
-
-  document
-    .getElementById("step1")
-    .classList.add("active");
-
-}
-
-
-
-/* ========================================
-   次の質問へ
-======================================== */
-
-function nextQuestion(question) {
-
-  const current =
-    document.getElementById(
-      "q" + question
-    );
-
-
-  if (!current.value.trim()) {
-
-    alert(
-      "回答を入力してください。"
-    );
-
-    return;
-
-  }
-
-
-  document
-    .getElementById(
-      "step" + question
-    )
-    .classList.remove(
-      "active"
-    );
-
-
-  document
-    .getElementById(
-      "step" + (question + 1)
-    )
-    .classList.add(
-      "active"
-    );
-
-}
-
-
-
-/* ========================================
-   現在地を判定
-======================================== */
-
-function determineStep(
-  q1,
-  q2,
-  q3
-) {
-
-  const text =
-    (
-      q1 +
-      " " +
-      q2 +
-      " " +
-      q3
-    )
-    .toLowerCase();
-
-
-  /*
-   * STEP1
-   */
-
-  if (
-
-    text.includes("何から") ||
-
-    text.includes("わからない") ||
-
-    text.includes("決まってない") ||
-
-    text.includes("決まっていない") ||
-
-    text.includes("コンセプト") ||
-
-    text.includes("方向性")
-
-  ) {
-
-    return {
-
-      step:
-        "STEP 1｜コンセプト設計",
-
-      message:
-
-        "今は、サロンの方向性を整理することから始めるのがおすすめです。\n\n" +
-
-        "「誰に、どんな価値を届けるサロンなのか」を明確にすることで、" +
-
-        "その後の技術・メニュー・価格・集客なども決めやすくなります。"
-
-    };
-
-  }
-
-
-  /*
-   * 現段階ではSTEP1を基本
-   */
-
-  return {
-
-    step:
-      "STEP 1｜コンセプト設計",
-
-    message:
-
-      "まずは、あなたがどんなサロンを作りたいのか、" +
-
-      "方向性を整理するところから始めてみましょう。"
-
-  };
-
-}
-
-
-
-/* ========================================
-   GASへ送信
-======================================== */
-
-function saveToSpreadsheet(
-  q1,
-  q2,
-  q3,
-  currentStep
-) {
-
-  const form =
-    document.getElementById(
-      "gasForm"
-    );
-
-
-  /*
-   * GAS送信先
-   */
-
-  form.action =
-    GAS_URL;
-
-
-  /*
-   * LINE情報
-   */
-
-  document
-    .getElementById(
-      "formLineUserId"
-    )
-    .value =
-    lineProfile.userId;
-
-
-  document
-    .getElementById(
-      "formDisplayName"
-    )
-    .value =
-    lineProfile.displayName;
-
-
-  document
-    .getElementById(
-      "formPictureUrl"
-    )
-    .value =
-    lineProfile.pictureUrl;
-
-
-  /*
-   * 診断回答
-   */
-
-  document
-    .getElementById(
-      "formQ1"
-    )
-    .value =
-    q1;
-
-
-  document
-    .getElementById(
-      "formQ2"
-    )
-    .value =
-    q2;
-
-
-  document
-    .getElementById(
-      "formQ3"
-    )
-    .value =
-    q3;
-
-
-  document
-    .getElementById(
-      "formCurrentStep"
-    )
-    .value =
-    currentStep;
-
-
-  /*
-   * 送信
-   */
-
-  form.submit();
-
-
-}
-
-
-
-/* ========================================
-   診断送信
-======================================== */
-
-function submitDiagnosis() {
-
-  const q1 =
-    document
-      .getElementById("q1")
-      .value
-      .trim();
-
-
-  const q2 =
-    document
-      .getElementById("q2")
-      .value
-      .trim();
-
-
-  const q3 =
-    document
-      .getElementById("q3")
-      .value
-      .trim();
-
-
-  if (!q3) {
-
-    alert(
-      "回答を入力してください。"
-    );
-
-    return;
-
-  }
-
-
-  /*
-   * 現在地判定
-   */
-
-  const result =
-    determineStep(
-      q1,
-      q2,
-      q3
-    );
-
-
-  /*
-   * 結果表示
-   */
-
-  document
-    .getElementById("step3")
-    .classList.remove(
-      "active"
-    );
-
-
-  document
-    .getElementById("resultStep")
-    .innerText =
-    result.step;
-
-
-  document
-    .getElementById("resultMessage")
-    .innerText =
-    result.message;
-
-
-  document
-    .getElementById("result")
-    .style.display =
-    "block";
-
-
-  /*
-   * GASへ保存
-   */
-
-  saveToSpreadsheet(
-
-    q1,
-
-    q2,
-
-    q3,
-
-    result.step
-
-  );
-
-
-}
-
-
-</script>
-
-
+    /* =========================
+       診断開始
+    ========================= */
+    function startDiagnosis() {
+      document.getElementById("start").style.display = "none";
+      document.getElementById("step1").classList.add("active");
+    }
+
+    /* =========================
+       次の質問
+    ========================= */
+    function nextQuestion(question) {
+      const current = document.getElementById("q" + question);
+
+      if (!current.value.trim()) {
+        alert("回答を入力してください。");
+        return;
+      }
+
+      document.getElementById("step" + question).classList.remove("active");
+      document.getElementById("step" + (question + 1)).classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    /* =========================
+       現在地判定
+    ========================= */
+    function determineStep(q1, q2, q3) {
+      const text = (q1 + " " + q2 + " " + q3).toLowerCase();
+
+      if (
+        text.includes("何から") ||
+        text.includes("わからない") ||
+        text.includes("決まってない") ||
+        text.includes("決まっていない") ||
+        text.includes("コンセプト") ||
+        text.includes("方向性")
+      ) {
+        return {
+          step: "STEP 1｜コンセプト設計",
+          message:
+            "今は、サロンの方向性を整理することから始めるのがおすすめです。\n\n" +
+            "「誰に、どんな価値を届けるサロンなのか」を明確にすることで、" +
+            "その後の技術・メニュー・価格・集客なども決めやすくなります。"
+        };
+      }
+
+      return {
+        step: "STEP 1｜コンセプト設計",
+        message:
+          "まずは、あなたがどんなサロンを作りたいのか、" +
+          "方向性を整理するところから始めてみましょう。"
+      };
+    }
+
+    /* =========================
+       GASへ保存
+    ========================= */
+    function saveToSpreadsheet(q1, q2, q3, currentStep) {
+      const form = document.getElementById("gasForm");
+      form.action = GAS_URL;
+
+      document.getElementById("formLineUserId").value = lineProfile.userId;
+      document.getElementById("formDisplayName").value = lineProfile.displayName;
+      document.getElementById("formPictureUrl").value = lineProfile.pictureUrl;
+      document.getElementById("formQ1").value = q1;
+      document.getElementById("formQ2").value = q2;
+      document.getElementById("formQ3").value = q3;
+      document.getElementById("formCurrentStep").value = currentStep;
+
+      try {
+        form.submit();
+        console.log("GAS送信を実行しました");
+      } catch (error) {
+        // 保存失敗でもユーザーの診断結果は表示する
+        console.error("GAS送信エラー", error);
+      }
+    }
+
+    /* =========================
+       診断送信
+    ========================= */
+    function submitDiagnosis() {
+      const q1 = document.getElementById("q1").value.trim();
+      const q2 = document.getElementById("q2").value.trim();
+      const q3 = document.getElementById("q3").value.trim();
+
+      if (!q1 || !q2 || !q3) {
+        alert("すべての回答を入力してください。");
+        return;
+      }
+
+      const result = determineStep(q1, q2, q3);
+
+      document.getElementById("step3").classList.remove("active");
+      document.getElementById("resultStep").innerText = result.step;
+      document.getElementById("resultMessage").innerText = result.message;
+      document.getElementById("result").style.display = "block";
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      // 結果表示を止めずに裏で保存
+      saveToSpreadsheet(q1, q2, q3, result.step);
+    }
+
+    /* =========================
+       ボタンイベント
+       ※onclick属性に依存しない
+    ========================= */
+    document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("startButton")
+        .addEventListener("click", startDiagnosis);
+
+      document.getElementById("next1")
+        .addEventListener("click", function () {
+          nextQuestion(1);
+        });
+
+      document.getElementById("next2")
+        .addEventListener("click", function () {
+          nextQuestion(2);
+        });
+
+      document.getElementById("submitButton")
+        .addEventListener("click", submitDiagnosis);
+
+      // LIFFは裏で開始。完了待ちで診断をロックしない。
+      initializeLiff();
+    });
+  </script>
 </body>
-
 </html>
+'''
+
+path = Path("/mnt/data/index_診断開始できる修正版.html")
+path.write_text(html, encoding="utf-8")
+print(f"Created: {path}")
+print(f"Lines: {len(html.splitlines())}")
