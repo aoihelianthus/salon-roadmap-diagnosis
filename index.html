@@ -1,13 +1,10 @@
-from pathlib import Path
-
-html = r'''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>サロン開業ロードマップ診断</title>
 
-  <!-- LIFF SDK -->
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
   <style>
@@ -156,7 +153,6 @@ html = r'''<!DOCTYPE html>
   <div class="container">
     <div class="card">
 
-      <!-- START -->
       <div id="start">
         <h1>サロン開業<br>ロードマップ診断</h1>
 
@@ -166,13 +162,11 @@ html = r'''<!DOCTYPE html>
           一緒に整理します。
         </p>
 
-        <!-- LINE情報の取得が終わっていなくても必ず押せる -->
         <button id="startButton" type="button">
           診断をはじめる
         </button>
       </div>
 
-      <!-- QUESTION 1 -->
       <div class="step" id="step1">
         <div class="progress">QUESTION 1 / 3</div>
 
@@ -190,7 +184,6 @@ html = r'''<!DOCTYPE html>
         <button type="button" id="next1">次へ</button>
       </div>
 
-      <!-- QUESTION 2 -->
       <div class="step" id="step2">
         <div class="progress">QUESTION 2 / 3</div>
 
@@ -209,7 +202,6 @@ html = r'''<!DOCTYPE html>
         <button type="button" id="next2">次へ</button>
       </div>
 
-      <!-- QUESTION 3 -->
       <div class="step" id="step3">
         <div class="progress">QUESTION 3 / 3</div>
 
@@ -228,7 +220,6 @@ html = r'''<!DOCTYPE html>
         <button type="button" id="submitButton">診断結果を見る</button>
       </div>
 
-      <!-- RESULT -->
       <div id="result">
         <h1>あなたの現在地</h1>
 
@@ -256,7 +247,6 @@ html = r'''<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- GAS送信用 -->
   <iframe name="gasFrame" style="display:none;"></iframe>
 
   <form id="gasForm" method="POST" target="gasFrame" style="display:none;">
@@ -270,30 +260,17 @@ html = r'''<!DOCTYPE html>
   </form>
 
   <script>
-    /* =========================
-       LIFF設定
-    ========================= */
     const LIFF_ID = "2011308854-yB1AByVO";
 
-    /* =========================
-       GAS設定
-    ========================= */
     const GAS_URL =
       "https://script.google.com/macros/s/AKfycbxynAozFlPf0SB9xkzLcRPLoQEBlBnkSo5gjGxAWjSOhEjqBHJtUaKYFaDVQUFlobnz/exec";
 
-    /* =========================
-       LINEプロフィール情報
-    ========================= */
     let lineProfile = {
       userId: "",
       displayName: "",
       pictureUrl: ""
     };
 
-    /* =========================
-       LIFF初期化
-       ※診断開始ボタンとは完全に独立
-    ========================= */
     async function initializeLiff() {
       try {
         if (typeof liff === "undefined") {
@@ -303,7 +280,6 @@ html = r'''<!DOCTYPE html>
         await liff.init({ liffId: LIFF_ID });
 
         if (!liff.isLoggedIn()) {
-          // 外部ブラウザから開いた場合だけLINEログインへ
           liff.login({ redirectUri: window.location.href });
           return;
         }
@@ -319,22 +295,15 @@ html = r'''<!DOCTYPE html>
         console.log("LINEプロフィール取得成功", lineProfile);
 
       } catch (error) {
-        // LIFF取得に失敗しても診断機能は止めない
         console.error("LIFF初期化エラー", error);
       }
     }
 
-    /* =========================
-       診断開始
-    ========================= */
     function startDiagnosis() {
       document.getElementById("start").style.display = "none";
       document.getElementById("step1").classList.add("active");
     }
 
-    /* =========================
-       次の質問
-    ========================= */
     function nextQuestion(question) {
       const current = document.getElementById("q" + question);
 
@@ -348,9 +317,6 @@ html = r'''<!DOCTYPE html>
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    /* =========================
-       現在地判定
-    ========================= */
     function determineStep(q1, q2, q3) {
       const text = (q1 + " " + q2 + " " + q3).toLowerCase();
 
@@ -379,9 +345,6 @@ html = r'''<!DOCTYPE html>
       };
     }
 
-    /* =========================
-       GASへ保存
-    ========================= */
     function saveToSpreadsheet(q1, q2, q3, currentStep) {
       const form = document.getElementById("gasForm");
       form.action = GAS_URL;
@@ -398,14 +361,10 @@ html = r'''<!DOCTYPE html>
         form.submit();
         console.log("GAS送信を実行しました");
       } catch (error) {
-        // 保存失敗でもユーザーの診断結果は表示する
         console.error("GAS送信エラー", error);
       }
     }
 
-    /* =========================
-       診断送信
-    ========================= */
     function submitDiagnosis() {
       const q1 = document.getElementById("q1").value.trim();
       const q2 = document.getElementById("q2").value.trim();
@@ -425,14 +384,9 @@ html = r'''<!DOCTYPE html>
 
       window.scrollTo({ top: 0, behavior: "smooth" });
 
-      // 結果表示を止めずに裏で保存
       saveToSpreadsheet(q1, q2, q3, result.step);
     }
 
-    /* =========================
-       ボタンイベント
-       ※onclick属性に依存しない
-    ========================= */
     document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("startButton")
         .addEventListener("click", startDiagnosis);
@@ -450,15 +404,8 @@ html = r'''<!DOCTYPE html>
       document.getElementById("submitButton")
         .addEventListener("click", submitDiagnosis);
 
-      // LIFFは裏で開始。完了待ちで診断をロックしない。
       initializeLiff();
     });
   </script>
 </body>
 </html>
-'''
-
-path = Path("/mnt/data/index_診断開始できる修正版.html")
-path.write_text(html, encoding="utf-8")
-print(f"Created: {path}")
-print(f"Lines: {len(html.splitlines())}")
